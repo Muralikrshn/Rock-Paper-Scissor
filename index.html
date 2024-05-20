@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock Paper Scissors</title>
+</head>
+<style>
+
+  .maincontainer {
+    height: 95vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(80, 129, 129);
+    border-radius: 2px;
+    flex-direction: column;
+  }
+
+  .container {
+    height: 350px;
+    width: 400px;
+    border: 1px solid;
+    /* padding: 70px 25px; */
+    border-radius: 5%;
+    background-color: aliceblue;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 3%;
+  }
+
+  .maingame {
+    text-align: center;
+  }
+
+  .title {
+    font-size: 30px;
+    font-weight: bold;
+    font-family: sans-serif;
+    border: 2px dashed rgb(65, 194, 197);
+    border-radius: 3px;
+    color: aliceblue;
+    padding: 0px 100px 0 100px;
+  }
+
+  .rock{
+    border-radius: 50%;
+    height: 100px;
+    width: 100px;
+  }
+  .emojis{
+    /* border: 1px solid; */
+    font-size: 35px;
+  }
+  .paper{
+    border-radius: 50%;
+    height: 100px;
+    width: 100px;
+  }
+  .scissor{
+    border-radius: 50%;
+    height: 100px;
+    width: 100px;
+  }
+  .cMove{
+    margin-left: 10px;
+  }
+
+  .resetbutton{
+    padding: 8px 15px;
+  }
+</style>
+<body>
+  <div class="maincontainer"> 
+    <div class="title"><h1>Play and Have Fun!!</h1></div>
+    <div class="container">
+      <div class="maingame">
+        <h1 style="color: aquamarine; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Rock - Paper - Scissor</h1>
+        <button class="rock" onclick="showRock()"><span class="emojis">&#x1f44a;</span></button>
+
+        <button class="paper" onclick="showPaper()"><span class="emojis">&#x1f590;</span></button>
+
+        <button class="scissor" onclick="showScissor()"><span class="emojis">&#x270c;</span></button>
+
+        <!-- <button class="cMove" onclick="randomGenerator()">Computer Move</button> -->
+
+        <h2 style="color: rgb(59, 132, 107); font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Choose Your Move 	&#x1f446;</h2>
+      </div>
+
+      <div class="reset">
+        <button class="resetbutton" onclick="resetScore()">Reset Score</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    const rock = "U+1F44A";
+    let myMove = null;
+    let computerMove = null;
+    let winner;
+    let scoreTrack = JSON.parse(localStorage.getItem('finalScore')) || {
+        Wins: 0,
+        Loses: 0,
+        Ties: 0
+      };
+
+    // if(!scoreTrack) {
+    //   scoreTrack = {
+    //     Wins: 0,
+    //     Loses: 0,
+    //     Ties: 0
+    //   }
+    // }
+
+    let scoreCard;
+    // console.log(scoreCard);
+
+
+    function showRock(){
+      console.log("\uD83D\uDC4A");
+      myMove = 'Rock';
+      // console.log(`Your Move: ${myMove}`);
+      computerMove = randomGenerator();
+      // console.log(`Computer Move: ${computerMove}`);
+
+      winner = whoWon(myMove, computerMove);
+      // console.log(winner);
+      
+      scoreCard = keepTrack(winner);
+      const score = `Wins: ${scoreCard.Wins}, Loses: ${scoreCard.Loses}, Ties: ${scoreCard.Ties}`
+      alert(`Your Move: "${myMove}" & Computer Move: "${computerMove}" \nGame Result: ${winner} \n${score}`);
+
+      
+    }
+
+    function showPaper(){
+      console.log("\uD83D\uDD90");
+      myMove = 'Paper';
+      // console.log(`Your Move: ${myMove}`);
+      computerMove = randomGenerator();
+      // console.log(`Computer Move: ${computerMove}`);
+
+      winner = whoWon(myMove, computerMove);
+      // console.log(winner);
+
+      scoreCard = keepTrack(winner);
+      const score = `Wins: ${scoreCard.Wins}, Loses: ${scoreCard.Loses}, Ties: ${scoreCard.Ties}`
+      alert(`Your Move: "${myMove}" & Computer Move: "${computerMove}" \nGame Result: ${winner} \n${score}`);
+
+      
+    }
+
+    function showScissor(){
+      console.log("\u270C\uFE0F");
+      myMove = 'Scissor';
+      // console.log(`Your Move: ${myMove}`);
+      computerMove = randomGenerator();
+      // console.log(`Computer Move: ${computerMove}`);
+
+      winner = whoWon(myMove, computerMove);
+      // console.log(winner);
+
+      scoreCard = keepTrack(winner);
+      const score = `Wins: ${scoreCard.Wins}, Loses: ${scoreCard.Loses}, Ties: ${scoreCard.Ties}`
+      alert(`Your Move: "${myMove}" & Computer Move: "${computerMove}" \nGame Result: ${winner} \n${score}`);
+
+      
+    }
+
+    function randomGenerator(){
+      let number = Math.random();
+      let comMove = null;
+      // console.log(number);
+      if (number >= 0 && number < 1/3){
+        comMove = 'Rock';
+        // console.log(comMove);
+      } else if (number >= 1/3 && number < 2/3) {
+        comMove = 'Paper';
+        // console.log(comMove);
+      }
+      else if (number >= 2/3 && number < 1) {
+        comMove = 'Scissor';
+        // console.log(comMove);
+      }
+
+      return comMove;
+    }
+
+    function whoWon(aMove, bMove){
+      let res = null;
+      if (aMove === bMove) {
+        res = 'Tie';
+      }
+      else if (aMove === 'Rock' && bMove === 'Scissor') {
+        res = 'You Win';
+      }
+      else if (aMove === 'Paper' && bMove === 'Rock') {
+        res = 'You Win';
+      }
+      else if (aMove === 'Scissor' && bMove === 'Paper') {
+        res = 'You Win';
+      }
+      else {
+        res = 'You Lost';
+      }
+
+      return res;
+    }
+  
+    function keepTrack(winner){
+      if (winner === 'You Win') {
+        scoreTrack.Wins += 1;
+      }
+      if (winner === 'You Lost') {
+        scoreTrack.Loses += 1;
+      }
+      if (winner === 'Tie') {
+        scoreTrack.Ties += 1;
+      }
+
+      localStorage.setItem('finalScore', JSON.stringify(scoreTrack));
+      console.log(scoreTrack);
+      return scoreTrack;
+    }
+  
+    function resetScore(){
+      scoreTrack.Wins = 0;
+      scoreTrack.Loses = 0;
+      scoreTrack.Ties = 0;
+
+      localStorage.removeItem('finalScore');
+      alert(`ScoreCard is Reset: Wins: ${scoreTrack.Wins}, Loses: ${scoreTrack.Loses}, Ties: ${scoreTrack.Ties}`)
+    }
+
+    
+
+    
+  
+  </script>
+</body>
+</html>
